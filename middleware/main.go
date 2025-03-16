@@ -60,6 +60,16 @@ func main() {
 
 	 log.Println("Reached DB")	
 
+	 insertQuery := `INSERT INTO your_table (column1, column2) VALUES ($1, $2)`
+
+	 // Execute the insert query
+	 _, err = db.Exec(insertQuery, "value1", "value2")
+	 if err != nil {
+	   log.Fatal(err)
+	 }
+	
+	 fmt.Println("Data inserted successfully")
+
 	 //Set up the HTTP mux
 	 mux := http.NewServeMux()
 
@@ -68,20 +78,20 @@ func main() {
 	 	fmt.Fprintln(w, "Welcome to the API!")
 	 })
 
-	 // Protected route (requires API key)
 	 protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	 	fmt.Fprintln(w, "You accessed a protected route!")
 	 })
-	 mux.Handle("/protected", apiKeyMiddleware(protectedHandler)) // Fixed route handler registration
+	 mux.Handle("/protected", apiKeyMiddleware(protectedHandler)) 
 
-	 // Protected POST route
 	 protectedPostHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	 	fmt.Fprintln(w, "Received POST data securely!")
 	 })
-	 mux.Handle("/data", apiKeyMiddleware(protectedPostHandler)) // Fixed route handler registration
+	 mux.Handle("/data", apiKeyMiddleware(protectedPostHandler)) 
 
 	 // Start server
 	 log.Println("Server running on :8443")
-	 log.Fatal(http.ListenAndServe(":8443", mux)) // Moved ListenAndServe after handler setup
+	 log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", mux)) // Moved ListenAndServe after handler setup
+
+
 }
 
