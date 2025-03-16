@@ -19,8 +19,8 @@ var validAPIKeys = map[string]bool{
 func apiKeyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.Header.Get("X-API-Key")
-		log.Println(apiKey)
 		 if !validAPIKeys[apiKey] {
+			log.Println(apiKey)
 		 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		 	return
 		 }

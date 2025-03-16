@@ -4,8 +4,7 @@ FROM golang:1.23
 # Set environment variables for Go
 ENV GO111MODULE=on \
     GOPATH=/go \
-    PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-
+    PATH=$GOPATH/bin:/usr/local/go/bin:$PATH 
 # Set the working directory inside the container
 WORKDIR /app
 
