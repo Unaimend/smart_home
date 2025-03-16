@@ -11,19 +11,21 @@ services:
     ports:
       - "8443:8443"
 
-##  timescaledb:
-##    image: timescale/timescaledb-ha:pg17
-##    container_name: timescaledb
-##    restart: unless-stopped
-##    env_file:
-##    - .env
-##    volumes:
-##      - timescaledb_data:/var/lib/postgresql/data
-##    deploy:
-##      resources:
-##        limits:
-##          cpus: "1"  
-##          memory: "2GB"  
-##volumes:
-##  timescaledb_data:
-##
+  timescaledb:
+    image: timescale/timescaledb-ha:pg17
+    container_name: timescaledb
+    restart: unless-stopped
+    env_file:
+    - .env
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "1"  
+          memory: "2GB"  
+    depends_on:
+      - middleware
+volumes:
+  timescaledb_data:
+
