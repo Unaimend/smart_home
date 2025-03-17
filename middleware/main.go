@@ -59,17 +59,6 @@ func main() {
 	 }
 
 	 log.Println("Reached DB")	
-
-	 insertQuery := `INSERT INTO your_table (column1, column2) VALUES ($1, $2)`
-
-	 // Execute the insert query
-	 _, err = db.Exec(insertQuery, "value1", "value2")
-	 if err != nil {
-	   log.Fatal(err)
-	 }
-	
-	 fmt.Println("Data inserted successfully")
-
 	 //Set up the HTTP mux
 	 mux := http.NewServeMux()
 
@@ -85,6 +74,17 @@ func main() {
 
 	 protectedPostHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	 	fmt.Fprintln(w, "Received POST data securely!")
+
+	  insertQuery := `INSERT INTO your_table (column1, column2) VALUES ($1, $2)`
+	  // Execute the insert query
+	  _, err = db.Exec(insertQuery, "value1", "value2")
+	  if err != nil {
+	    log.Fatal(err)
+	  }
+	
+	 fmt.Println("Data inserted successfully")
+
+
 	 })
 	 mux.Handle("/data", apiKeyMiddleware(protectedPostHandler)) 
 
