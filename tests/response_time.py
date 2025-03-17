@@ -24,9 +24,9 @@ response_times = []
 status_codes = []
 
 # Define number of requests and concurrent threads
-num_requests = 100  # Modify the number of requests you want to send
-num_threads = 2# Modify the number of concurrent threads
-
+num_requests = 1000  # Modify the number of requests you want to send
+num_threads = 10 # Modify the number of concurrent threads
+WAIT_TIME = 0.0
 def send_request():
     start_time = time.time()
     try:
@@ -34,8 +34,10 @@ def send_request():
         response_time = time.time() - start_time
         response_times.append(response_time)
         status_codes.append(response.status_code)
+        time.sleep(WAIT_TIME)
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
+        # TODO Think about how to handle this
         response_times.append(None)
         status_codes.append(None)
 
