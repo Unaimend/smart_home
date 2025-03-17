@@ -25,7 +25,7 @@ status_codes = []
 
 # Define number of requests and concurrent threads
 num_requests = 100  # Modify the number of requests you want to send
-num_threads = 20# Modify the number of concurrent threads
+num_threads = 2# Modify the number of concurrent threads
 
 def send_request():
     start_time = time.time()
@@ -56,29 +56,30 @@ print(f"Successful Requests: {successful_requests}")
 print(f"Failed Requests: {failed_requests}")
 
 # Visualizing response times and status codes
+plt.figure(figsize=(10, 6))
 
 # Response time visualization (Boxplot)
-plt.figure(figsize=(10, 6))
+plt.subplot(2, 2, 1)  # 2 rows, 2 columns, 1st plot
 sns.boxplot(data=response_times)
 plt.title('Response Time Distribution')
 plt.ylabel('Response Time (seconds)')
-plt.show()
 
 # Status code visualization (Bar plot)
 status_code_counts = {code: status_codes.count(code) for code in set(status_codes) if code is not None}
 
-plt.figure(figsize=(10, 6))
+plt.subplot(2, 2, 2)  # 2 rows, 2 columns, 1st plot
 sns.barplot(x=list(status_code_counts.keys()), y=list(status_code_counts.values()))
 plt.title('API Response Status Code Distribution')
 plt.xlabel('Status Code')
 plt.ylabel('Frequency')
-plt.show()
 
 # Response Time Histogram
-plt.figure(figsize=(10, 6))
+plt.subplot(2, 2, 3)  
 sns.histplot(response_times, kde=True)
 plt.title('Response Time Histogram')
 plt.xlabel('Response Time (seconds)')
 plt.ylabel('Frequency')
-plt.show()
+plt.tight_layout()
 
+# Show the plot
+plt.show()
