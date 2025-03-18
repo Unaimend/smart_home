@@ -3,8 +3,8 @@ version: '3.8'
 services:
   middleware:
     build: 
-      context: middleware/.
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: middleware/Dockerfile
     env_file:
     - .env
     ports:

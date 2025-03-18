@@ -5,93 +5,98 @@ import (
 	"log"
 	"net/http"
 	// Uncomment and use the necessary imports when needed
-	 "database/sql"
-	 "os"
- 	_ "github.com/lib/pq"
+	"database/sql"
+	_ "github.com/lib/pq"
+	"os"
 )
 
+type App struct {
+  DB *sql.DB
+}
 
 var validAPIKeys = map[string]bool{
-    os.Getenv("API_KEY"): true, // API key loaded from environment variable
+	os.Getenv("API_KEY"): true, // API key loaded from environment variable
 }
 
 // Middleware for API key authentication
 func apiKeyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.Header.Get("X-API-Key")
-		 if !validAPIKeys[apiKey] {
+		if !validAPIKeys[apiKey] {
 			log.Println(apiKey)
-		 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		 	return
-		 }
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }
 
+
+func connectToDB(connectionString string) *sql.DB {
+  //Open the database connection
+	db, err := sql.Open("postgres", connectionString )
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+  log.Println("Reached DB")
+  
+  return db;
+}
+
+func (db *App) handlePost(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Received POST data securely!")
+
+		insertQuery := `INSERT INTO your_table (column1, column2) VALUES ($1, $2)`
+		// Execute the insert query
+    _, err := db.DB.Exec(insertQuery, "value1", "value2")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println("Data inserted successfully")
+    return
+	}
+
+
 func main() {
-	// Uncomment and replace the database connection setup when needed
+  // Loading env variables from .env files
 	dbUser := os.Getenv("POSTGRES_USER")
 	dbPassword := os.Getenv("POSTGRES_PASSWORD")
 	dbName := os.Getenv("POSTGRES_DB")
- 	if os.Getenv("API_KEY") == "" {
-        	log.Fatal("API_KEY environment variable is not set")
-    	}
 
-	 // Check if the environment variables are set
-	 if dbUser == "" || dbPassword == "" || dbName == "" {
-	 	log.Fatal("One or more environment variables are not set!")
-	 }
+	if os.Getenv("API_KEY") == "" {
+		log.Fatal("API_KEY environment variable is not set")
+	}
 
-	 connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=timescaledb sslmode=disable", dbUser, dbPassword, dbName)
-	 //Open the database connection
-	 log.Println("Trying to open DB 1")	
-	 db, err := sql.Open("postgres", connStr)
-	 log.Println("Trying to open DB 2")	
-	 if err != nil {
-	 	log.Fatal(err)
-	 }
-	 defer db.Close()
+	// Check if the environment variables are set
+	if dbUser == "" || dbPassword == "" || dbName == "" {
+		log.Fatal("One or more environment variables are not set!")
+	}
 
-	 // Check if the database is reachable
-	 err = db.Ping()
-	 if err != nil {
-	 	log.Fatal(err)
-	 }
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=timescaledb sslmode=disable", dbUser, dbPassword, dbName)
+  db := connectToDB(connStr);
+  defer db.Close()
+  
+  app := &App{DB: db}
 
-	 log.Println("Reached DB")	
-	 //Set up the HTTP mux
-	 mux := http.NewServeMux()
+	//Set up the HTTP mux
+	mux := http.NewServeMux()
 
-	 // Public route
-	 mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	 	fmt.Fprintln(w, "Welcome to the API!")
-	 })
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Welcome to the API!")
+	})
 
-	 protectedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	 	fmt.Fprintln(w, "You accessed a protected route!")
-	 })
-	 mux.Handle("/protected", apiKeyMiddleware(protectedHandler)) 
+	protectedPostHandler := http.HandlerFunc(app.handlePost)
+	mux.Handle("/data", apiKeyMiddleware(protectedPostHandler))
 
-	 protectedPostHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	 	fmt.Fprintln(w, "Received POST data securely!")
-
-	  insertQuery := `INSERT INTO your_table (column1, column2) VALUES ($1, $2)`
-	  // Execute the insert query
-	  _, err = db.Exec(insertQuery, "value1", "value2")
-	  if err != nil {
-	    log.Fatal(err)
-	  }
-	
-	 fmt.Println("Data inserted successfully")
-
-
-	 })
-	 mux.Handle("/data", apiKeyMiddleware(protectedPostHandler)) 
-
-	 // Start server
-	 log.Println("Server running on :8443")
-	 log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", mux)) // Moved ListenAndServe after handler setup
-
+	// Start server
+	log.Println("Server running on :8443")
+	log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", mux)) // Moved ListenAndServe after handler setup
 
 }
-

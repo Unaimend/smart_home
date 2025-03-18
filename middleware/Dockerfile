@@ -9,9 +9,9 @@ ENV GO111MODULE=on \
 WORKDIR /app
 
 # Copy the current project files to the container
-COPY . /app
-COPY cert/cert.pem /app
-COPY cert/key.pem /app
+COPY ./middleware/* /app
+COPY ./middleware/cert/cert.pem /app
+COPY ./middleware/cert/key.pem /app
 
 
 # Run any required initialization or dependencies installation (optional)
