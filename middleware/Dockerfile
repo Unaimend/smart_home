@@ -16,7 +16,7 @@ COPY ./middleware/cert/key.pem /app
 
 # Run any required initialization or dependencies installation (optional)
 RUN go mod tidy
-RUN go get github.com/lib/pq
+RUN go mod download
 # Define the default command to run
 CMD ["go", "run", "main.go"]
 
