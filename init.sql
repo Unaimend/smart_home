@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS your_table (
 );
 
 
-CREATE TABLE temperature_data (
+CREATE TABLE IF NOT EXISTS temperature (
   id SERIAL PRIMARY KEY,
   timestamp TIMESTAMPTZ DEFAULT now(),
   temperature DOUBLE PRECISION NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE temperature_data (
 );
 
 
-CREATE TABLE temperature_data (
+CREATE TABLE IF NOT EXISTS humidity (
   id SERIAL PRIMARY KEY,
   timestamp TIMESTAMPTZ DEFAULT now(),
   humidity DOUBLE PRECISION NOT NULL,

@@ -99,7 +99,14 @@ func (db *App) handleClimate(w http.ResponseWriter, r *http.Request) {
 	) 
 
 
-	insertQuery := `INSERT INTO temperature_data (timestamp, temperature, unit) VALUES ($1, $2, $3)`
+	insertQuery := `INSERT INTO temperature (timestamp, temperature, unit) VALUES ($1, $2, $3)`
+	// Execute the insert query
+	_, err = db.DB.Exec(insertQuery, climateData.TimeStamp, climateData.Temperature, "C")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	insertQuery = `INSERT INTO humidity (timestamp, humidity, unit) VALUES ($1, $2, $3)`
 	// Execute the insert query
 	_, err = db.DB.Exec(insertQuery, climateData.TimeStamp, climateData.Temperature, "C")
 	if err != nil {
