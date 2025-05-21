@@ -10,7 +10,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 load_dotenv()
 
 # API endpoint and headers
-url = 'https://127.0.0.1:8443/data'
+#url = 'https://127.0.0.1:8443/data'
+url = 'http://192.168.178.39:8443/protected'
+
 API_KEY: str = os.getenv('API_KEY')
 headers = {
     'X-API-Key': API_KEY

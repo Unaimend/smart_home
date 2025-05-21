@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS your_table (
 
 CREATE TABLE IF NOT EXISTS temperature (
   id SERIAL PRIMARY KEY,
+  location VARCHAR(256),
   timestamp TIMESTAMPTZ DEFAULT now(),
   temperature DOUBLE PRECISION NOT NULL,
   unit TEXT CHECK (unit IN ('C', 'F')) NOT NULL

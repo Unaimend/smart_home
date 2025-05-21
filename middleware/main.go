@@ -20,7 +20,7 @@ type ClimateData struct {
   Temperature float64 `json:"temperature"`
 	Humidity    float64 `json:"humidity"`
 	TimeStamp   time.Time `json:"timestamp"`
-	Location string `json:"timestamp"`
+	Location string `json:"location"`
 }
 
 var validAPIKeys = map[string]bool{
@@ -81,7 +81,7 @@ func (db *App) handleClimate(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
   var climateData ClimateData
-
+  fmt.Printf("%s \n", string(body))
 	// Unmarshal the JSON data into the struct
 	err = json.Unmarshal(body, &climateData)
 	if err != nil {
@@ -90,26 +90,27 @@ func (db *App) handleClimate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Output the received data (or handle it as needed)
-	fmt.Printf("Received temperature: %d°C, humidity: %d%% at %04d-%02d-%02dT%02d:%02d:%02dZ\n at %s", climateData.Temperature, climateData.Humidity,
+  fmt.Printf("Received temperature: %d°C, humidity: %d%% at %04d-%02d-%02dT%02d:%02d:%02dZ at Location: %s\n", climateData.Temperature, climateData.Humidity,
 		climateData.TimeStamp.Year(),   // Year (4 digits)
 		climateData.TimeStamp.Month(),  // Month (1-12)
 		climateData.TimeStamp.Day(),    // Day (1-31)
 		climateData.TimeStamp.Hour(),   // Hour (0-23)
 		climateData.TimeStamp.Minute(), // Minute (0-59)
-		climateData.TimeStamp.Second() // Second (0-59)
+		climateData.TimeStamp.Second(), // Second (0-59)
+    climateData.Location,
 	) 
 
 
-	insertQuery := `INSERT INTO temperature (timestamp, temperature, unit) VALUES ($1, $2, $3)`
+	insertQuery := `INSERT INTO temperature (location, timestamp, temperature, unit) VALUES ($1, $2, $3, $4)`
 	// Execute the insert query
-	_, err = db.DB.Exec(insertQuery, climateData.TimeStamp, climateData.Temperature, "C")
+	_, err = db.DB.Exec(insertQuery, climateData.Location, climateData.TimeStamp, climateData.Temperature, "C")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	insertQuery = `INSERT INTO humidity (timestamp, humidity, unit) VALUES ($1, $2, $3)`
+	insertQuery = `INSERT INTO humidity (location, timestamp, humidity, unit) VALUES ($1, $2, $3, $4)`
 	// Execute the insert query
-	_, err = db.DB.Exec(insertQuery, climateData.TimeStamp, climateData.Temperature, "C")
+	_, err = db.DB.Exec(insertQuery, climateData.Location, climateData.TimeStamp, climateData.Temperature, "C")
 	if err != nil {
 		log.Fatal(err)
 	}
