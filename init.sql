@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS humidity (
   location VARCHAR(256),
   timestamp TIMESTAMPTZ DEFAULT now(),
   humidity DOUBLE PRECISION NOT NULL,
-  unit TEXT CHECK (unit IN ('C', 'F')) NOT NULL
+  unit TEXT CHECK (unit IN ('%')) NOT NULL
 );
