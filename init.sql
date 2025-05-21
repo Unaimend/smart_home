@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS temperature (
 
 CREATE TABLE IF NOT EXISTS humidity (
   id SERIAL PRIMARY KEY,
+  location VARCHAR(256),
   timestamp TIMESTAMPTZ DEFAULT now(),
   humidity DOUBLE PRECISION NOT NULL,
   unit TEXT CHECK (unit IN ('C', 'F')) NOT NULL

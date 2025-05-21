@@ -9,9 +9,9 @@ services:
     - .env
     ports:
       - "8443:8443"
-    depends_on:
-       timescaledb:
-         condition: service_healthy
+        ##depends_on:
+        ##   timescaledb:
+        ##     condition: service_healthy
     restart: always
 
   timescaledb:

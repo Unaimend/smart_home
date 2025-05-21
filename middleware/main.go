@@ -17,9 +17,10 @@ type App struct {
 	DB *sql.DB
 }
 type ClimateData struct {
-  Temperature int       `json:"temperature"`
-	Humidity    int       `json:"humidity"`
+  Temperature float64 `json:"temperature"`
+	Humidity    float64 `json:"humidity"`
 	TimeStamp   time.Time `json:"timestamp"`
+	Location string `json:"timestamp"`
 }
 
 var validAPIKeys = map[string]bool{
@@ -84,18 +85,18 @@ func (db *App) handleClimate(w http.ResponseWriter, r *http.Request) {
 	// Unmarshal the JSON data into the struct
 	err = json.Unmarshal(body, &climateData)
 	if err != nil {
-		http.Error(w, "Failed to parse JSON", http.StatusBadRequest)
+		http.Error(w, "Server Failed to parse JSON", http.StatusBadRequest)
 		return
 	}
 
 	// Output the received data (or handle it as needed)
-	fmt.Printf("Received temperature: %d°C, humidity: %d%% at %04d-%02d-%02dT%02d:%02d:%02dZ\n", climateData.Temperature, climateData.Humidity,
+	fmt.Printf("Received temperature: %d°C, humidity: %d%% at %04d-%02d-%02dT%02d:%02d:%02dZ\n at %s", climateData.Temperature, climateData.Humidity,
 		climateData.TimeStamp.Year(),   // Year (4 digits)
 		climateData.TimeStamp.Month(),  // Month (1-12)
 		climateData.TimeStamp.Day(),    // Day (1-31)
 		climateData.TimeStamp.Hour(),   // Hour (0-23)
 		climateData.TimeStamp.Minute(), // Minute (0-59)
-		climateData.TimeStamp.Second(), // Second (0-59)
+		climateData.TimeStamp.Second() // Second (0-59)
 	) 
 
 
