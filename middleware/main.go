@@ -90,7 +90,7 @@ func (db *App) handleClimate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Output the received data (or handle it as needed)
-  fmt.Printf("Received temperature: %d°C, humidity: %d%% at %04d-%02d-%02dT%02d:%02d:%02dZ at Location: %s\n", climateData.Temperature, climateData.Humidity,
+  fmt.Printf("Received temperature: %f°C, humidity: %f%% at %04d-%02d-%02dT%02d:%02d:%02dZ at Location: %s\n", climateData.Temperature, climateData.Humidity,
 		climateData.TimeStamp.Year(),   // Year (4 digits)
 		climateData.TimeStamp.Month(),  // Month (1-12)
 		climateData.TimeStamp.Day(),    // Day (1-31)
