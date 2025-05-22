@@ -33,6 +33,18 @@ services:
         interval: 5s
         retries: 5
         start_period: 5s
+  
+  local_weather:
+
+    build:
+      context: .
+      dockerfile: getweather/Dockerfile
+      #command: bash -c "while true; do sleep 1000; done"
+      #tty: true
+      #stdin_open: true
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: always
 
 volumes:
   timescaledb_data:
